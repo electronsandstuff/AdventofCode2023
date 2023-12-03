@@ -13,7 +13,7 @@ const digit_names = Dict{String,Int64}(
     "nine" => 9
 )
 
-# Find first or last digit
+# Find first or last digit in a string including by name (with part2 switch)
 function finddigit(s, first=true, part2=false)
     for i in (first ? (1:lastindex(s)) : (lastindex(s):-1:1))
         isdigit(s[i]) && return parse(Int64, s[i])
@@ -24,10 +24,11 @@ function finddigit(s, first=true, part2=false)
     return 0
 end
 
-# Get number from if 
+# Get first and last digits, turn into number; sum over the lines
 linetonum(s, part2) = 10*finddigit(s, true, part2) + finddigit(s, false, part2)
 linessum(s, part2) = sum(linetonum(l, part2) for l in eachline(IOBuffer(s)))
 
+# Final solution
 function day01(input::String = readInput(joinpath(@__DIR__, "data", "day01.txt")))
     [linessum(input, false), linessum(input, true)]
 end
