@@ -1,7 +1,7 @@
 module Day01
 
 # Big dict of digits and their corresponding numbers
-digit_names = Dict(
+const digit_names = Dict{String,Int64}(
     "one" => 1,
     "two" => 2,
     "three" => 3,
