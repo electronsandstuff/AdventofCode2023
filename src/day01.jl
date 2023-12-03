@@ -16,9 +16,9 @@ const digit_names = Dict{String,Int64}(
 # Find first or last digit in a string including by name (with part2 switch)
 function finddigit(s, first=true, part2=false)
     for i in (first ? (1:lastindex(s)) : (lastindex(s):-1:1))
-        isdigit(s[i]) && return parse(Int64, s[i])
+        @inbounds isdigit(s[i]) && return parse(Int64, s[i])
         for (d, v) in pairs(digit_names)
-            startswith(s[i:end], d) && part2 && return v
+            @inbounds startswith(s[i:end], d) && part2 && return v
         end
     end
     return 0

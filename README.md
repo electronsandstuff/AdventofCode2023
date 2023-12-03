@@ -5,7 +5,7 @@ Project structure was taken from [goggle/AdventOfCode2021.jl](https://github.com
 ## Benchmarks
 | Day | Problem | Time | Allocated memory | Solution |
 |----:|:-------:|-----:|-----------------:|:-----------:|
-| 1 | [:white_check_mark:](https://adventofcode.com/2023/day/1) | 4.447 ms | 6.04 MiB | [:white_check_mark:](https://github.com/electronsandstuff/AdventofCode2023/blob/main/src/day01.jl) 
+| 1 | [:white_check_mark:](https://adventofcode.com/2023/day/1) | 3.702 ms | 6.04 MiB | [:white_check_mark:](https://github.com/electronsandstuff/AdventofCode2023/blob/main/src/day01.jl) |
 
 This data was taken on the following machine.
 ```
