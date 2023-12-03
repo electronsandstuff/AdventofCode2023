@@ -65,7 +65,7 @@ function _to_markdown_table(bresults)
         ps = "[:white_check_mark:](https://adventofcode.com/2023/day/$d)"
         ts = BenchmarkTools.prettytime(t)
         ms = BenchmarkTools.prettymemory(m)
-        ss = @sprintf("[:white_check_mark:](https://github.com/electronsandstuff/AdventofCode203/blob/master/src/day%02d.jl)", d)
+        ss = @sprintf("[:white_check_mark:](https://github.com/electronsandstuff/AdventofCode2023/blob/main/src/day%02d.jl)", d)
         push!(lines, "| $ds | $ps | $ts | $ms | $ss |")
     end
     return join(lines, "\n")
