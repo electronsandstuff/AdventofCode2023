@@ -1,19 +1,36 @@
 module Day05
 
+# Rule helper object
 struct Rule
     source_range::UnitRange{Int64}
     offset::Int64
 end
 Rule(dest_start::Int64, src_start::Int64, range::Int64) = Rule(src_start:(src_start+range-1), dest_start-src_start)
 
+# My linked-list object for rules
 struct LinkedList
     to::Union{LinkedList, Nothing}
     rules::Vector{Rule}
 end
 push(list::LinkedList, data::Vector{Rule}) = LinkedList(list, data)
 
+# Some helper functions for working with ranges
 Base.minimum(a::Vector{UnitRange{Int64}}) = minimum([first(x) for x in a])
 rangediff(a, b) =  [first(a):(first(b)-1), (last(b)+1):last(a)]
+
+# Rules to transform numbers through the rules and linked lists of rules
+transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
+transform(map::Map, val) = transform(map.rules, val)
+
+function transform(rs::Vector{Rule}, val::Int64)
+    for r in rs; val in r.source_range && return val + r.offset; end
+    val
+end
+
+function transform(ll::LinkedList, val)
+    n = transform(ll.rules, val)
+    isnothing(ll.to) ? n : transform(ll.to, n)
+end
 
 function transform(rs::Vector{Rule}, vals::UnitRange{Int64})
     vals_a::Vector{UnitRange{Int64}} = [vals]
@@ -35,19 +52,7 @@ function transform(rs::Vector{Rule}, vals::UnitRange{Int64})
     [out; vals_a]
 end
 
-transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
-
-function transform(rs::Vector{Rule}, val::Int64)
-    for r in rs; val in r.source_range && return val + r.offset; end
-    val
-end
-
-transform(map::Map, val) = transform(map.rules, val)
-function transform(ll::LinkedList, val)
-    n = transform(ll.rules, val)
-    isnothing(ll.to) ? n : transform(ll.to, n)
-end
-
+# Read the input file and get seeds and the maps of rules
 function parse_maps(s, ll_from, ll_to)
     seeds::Vector{Int64} = []
     maps = Dict{String, NamedTuple{(:from, :rules), Tuple{String, Vector{Rule}}}}()
@@ -82,16 +87,6 @@ function parse_maps(s, ll_from, ll_to)
     end
     seeds_pt2 = [start:(start+rng-1) for (start, rng) in zip(seeds[1:2:end], seeds[2:2:end])]
     seeds, seeds_pt2, linked_list
-end
-
-function maps_to_ll(maps, from, to)
-    dest_to_map = Dict(m.to => m for m in maps)
-    linked_list = LinkedList(nothing, [])
-    while from != to
-        linked_list = push(linked_list, dest_to_map[to].rules)
-        to = dest_to_map[to].from
-    end
-    linked_list
 end
 
 # Find minimum transformed values
