@@ -37,8 +37,8 @@ subgame_maxes = Dict{String, Int64}("red" => 12, "green" => 13, "blue" => 14)
 # Final solution
 function day02(input::String = readInput(joinpath(@__DIR__, "data", "day02.txt")))
     [
-        sum(line_to_count1(l, subgame_maxes) for l in eachline(IOBuffer(input))),
-        sum(line_to_count2(l) for l in eachline(IOBuffer(input))),
+        sum(line_to_count1(l, subgame_maxes) for l in split(input, '\n')),
+        sum(line_to_count2(l) for l in split(input, '\n')),
     ]
 end
 

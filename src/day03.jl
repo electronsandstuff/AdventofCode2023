@@ -1,6 +1,6 @@
 module Day03
 
-load_input(s) = permutedims(hcat((collect(strip(l)) for l in split(s, "\n") if length(l) > 1)...))
+load_input(s) = permutedims(hcat((collect(strip(l)) for l in split(s, '\n') if length(l) > 1)...))
 
 # Check if a symbol neighbors this position
 issymbol(c) = c != '.' &&  !isdigit(c)

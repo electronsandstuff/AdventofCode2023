@@ -26,7 +26,7 @@ end
 
 # Get first and last digits, turn into number; sum over the lines
 linetonum(s, part2) = 10*finddigit(s, true, part2) + finddigit(s, false, part2)
-linessum(s, part2) = sum(linetonum(l, part2) for l in eachline(IOBuffer(s)))
+linessum(s, part2) = sum(linetonum(l, part2) for l in split(s, '\n'))
 
 # Final solution
 function day01(input::String = readInput(joinpath(@__DIR__, "data", "day01.txt")))
