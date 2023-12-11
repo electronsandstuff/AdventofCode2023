@@ -74,4 +74,7 @@ using Test
     humidity-to-location map:
     60 56 37
     56 93 4") == [35, 46]
+
+    @test day06("Time:      7  15   30
+    Distance:  9  40  200") == [288, 71503]
 end
