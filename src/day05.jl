@@ -20,7 +20,6 @@ rangediff(a, b) =  [first(a):(first(b)-1), (last(b)+1):last(a)]
 
 # Rules to transform numbers through the rules and linked lists of rules
 transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
-transform(map::Map, val) = transform(map.rules, val)
 
 function transform(rs::Vector{Rule}, val::Int64)
     for r in rs; val in r.source_range && return val + r.offset; end
