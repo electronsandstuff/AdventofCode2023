@@ -73,5 +73,5 @@ using Test
     
     humidity-to-location map:
     60 56 37
-    56 93 4")[1] == 35
+    56 93 4") == [35, 46]
 end

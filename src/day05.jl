@@ -12,6 +12,30 @@ struct LinkedList
 end
 push(list::LinkedList, data::Vector{Rule}) = LinkedList(list, data)
 
+Base.minimum(a::Vector{UnitRange{Int64}}) = minimum([first(x) for x in a])
+rangediff(a, b) =  [first(a):(first(b)-1), (last(b)+1):last(a)]
+
+function transform(rs::Vector{Rule}, vals::UnitRange{Int64})
+    vals_a::Vector{UnitRange{Int64}} = [vals]
+    vals_b::Vector{UnitRange{Int64}} = []
+    out::Vector{UnitRange{Int64}} = []
+    for r in rs
+        for v in vals_a
+            i = intersect(r.source_range, v)
+            if length(i) > 0 
+                append!(vals_b, rangediff(v, r.source_range))
+                push!(out, i .+ r.offset)
+            else
+                push!(vals_b, v)
+            end
+        end
+        vals_a = filter(x -> length(x) > 0, vals_b)
+        vals_b = Vector{UnitRange{Int64}}()
+    end
+    [out; vals_a]
+end
+
+transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
 
 function transform(rs::Vector{Rule}, val::Int64)
     for r in rs; val in r.source_range && return val + r.offset; end
@@ -56,7 +80,8 @@ function parse_maps(s, ll_from, ll_to)
         linked_list = push(linked_list, maps[ll_to].rules)
         ll_to = maps[ll_to].from
     end
-    seeds, linked_list
+    seeds_pt2 = [start:(start+rng-1) for (start, rng) in zip(seeds[1:2:end], seeds[2:2:end])]
+    seeds, seeds_pt2, linked_list
 end
 
 function maps_to_ll(maps, from, to)
@@ -71,14 +96,13 @@ end
 
 # Find minimum transformed values
 function min_dest_val(ll::LinkedList, vals::Vector{Int64}) 
-    println([transform(ll, v) for v in vals])
     min((transform(ll, v) for v in vals)...)
 end
+min_dest_val(ll::LinkedList, vals::Vector{UnitRange{Int64}}) = minimum(transform(ll, vals))
 
 function day05(input::String = readInput(joinpath(@__DIR__, "data", "day05.txt")))
-    seeds, maps = parse_maps(input, "seed", "location")
-    # ll = maps_to_ll(maps, "seed", "location")
-    [min_dest_val(maps, seeds), ]
+    seeds_pt1, seeds_pt2, maps = parse_maps(input, "seed", "location")
+    [min_dest_val(maps, seeds_pt1), min_dest_val(maps, seeds_pt2)]
 end
 
 end
