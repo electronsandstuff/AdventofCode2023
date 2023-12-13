@@ -77,4 +77,10 @@ using Test
 
     @test day06("Time:      7  15   30
     Distance:  9  40  200") == [288, 71503]
+
+    @test day07("32T3K 765
+    T55J5 684
+    KK677 28
+    KTJJT 220
+    QQQJA 483") == [6440, 5905]
 end
