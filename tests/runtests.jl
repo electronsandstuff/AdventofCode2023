@@ -219,3 +219,7 @@ O.#..O.#.#
 .......O..
 #....###..
 #OO..#....") == [136, 64]
+
+@test AdventofCode2023.Day15.aoc_hash("HASH") == 52
+
+@test day15("rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7") == [1320, 145]
