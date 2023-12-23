@@ -26,7 +26,7 @@ function parse_input(s)
     ret = Vector{Matrix{Bool}}()
     idx = 1
     while true
-        m = match(r"([#.\n\w]+?)(?:(?:\n\w*\n)|\z|(?:\n\z))", s, idx)
+        m = match(r"([#.\r?\n\w]+?)(?:(?:\r?\n\w*\r?\n)|\z|(?:\r?\n\z))", s, idx)
         isnothing(m) && break
         idx = m.offset + length(m.match)
         push!(ret, str_to_mat(m.captures[1]))
