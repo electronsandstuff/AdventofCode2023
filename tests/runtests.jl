@@ -287,3 +287,15 @@ hdj{m>838:A,pv}
 {x=2036,m=264,a=79,s=2244}
 {x=2461,m=1339,a=466,s=291}
 {x=2127,m=1623,a=2188,s=1013}") == [19114, 167409079868000]
+
+@test day20("broadcaster -> a, b, c
+%a -> b
+%b -> c
+%c -> inv
+&inv -> a")[1] == 32000000
+
+@test day20("broadcaster -> a
+%a -> inv, con
+&inv -> b
+%b -> con
+&con -> output")[1] == 11687500

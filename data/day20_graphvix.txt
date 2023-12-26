@@ -1,0 +1,117 @@
+strict digraph{
+  fg [color = red]
+  fg -> nt,gt
+  zp [color = green]
+  zp -> rx
+  fh [color = red]
+  fh -> nt,xz
+  pj [color = red]
+  pj -> zj,zq
+  jc [color = red]
+  jc -> nt,nk
+  mr [color = red]
+  mr -> vv,pz
+  cl [color = red]
+  cl -> fp,zq
+  xb [color = red]
+  xb -> bl,vv
+  nc [color = red]
+  nc -> zq
+  mg [color = red]
+  mg -> vn
+  zj [color = red]
+  zj -> cf
+  sb [color = green]
+  sb -> zp
+  ht [color = red]
+  ht -> pp
+  gt [color = red]
+  gt -> jc
+  rq [color = red]
+  rq -> ft
+  nt [color = green]
+  nt -> rq,fg,ft,nd,gt,xz
+  ps [color = red]
+  ps -> xm
+  fs [color = red]
+  fs -> ff
+  nb [color = red]
+  nb -> dv
+  qd [color = red]
+  qd -> xb
+  kg [color = red]
+  kg -> mr,vv
+  dv [color = red]
+  dv -> vv,hr
+  rm [color = red]
+  rm -> zq,fs
+  nk [color = red]
+  nk -> rq,nt
+  hr [color = red]
+  hr -> dm,vv
+  xm [color = red]
+  xm -> vn,ht
+  pp [color = red]
+  pp -> mq
+  br [color = red]
+  br -> vn,jz
+  gr [color = red]
+  gr -> ln
+  bh [color = red]
+  bh -> qd,vv
+  cf [color = red]
+  cf -> gr,zq
+  vv [color = green]
+  vv -> dm,bl,sb,nb,qd,bh
+  zc [color = red]
+  zc -> zv
+  zv [color = red]
+  zv -> dc,vn
+  jz [color = red]
+  jz -> qs
+  nd [color = green]
+  nd -> zp
+  rd [color = red]
+  rd -> nc,zq
+  ds [color = green]
+  ds -> zp
+  mq [color = red]
+  mq -> vn,zc
+  bl [color = red]
+  bl -> bb
+  qn [color = red]
+  qn -> nt
+  pz [color = red]
+  pz -> vv
+  qs [color = red]
+  qs -> vn,ps
+  lm [color = red]
+  lm -> nt,qn
+  xz [color = red]
+  xz -> dr
+  bb [color = red]
+  bb -> nb,vv
+  dm [color = red]
+  dm -> kg
+  ft [color = red]
+  ft -> fh
+  vn [color = green]
+  vn -> br,jz,ht,ps,zc,pp,ds
+  xd [color = red]
+  xd -> nt,lm
+  hf [color = green]
+  hf -> zp
+  broadcaster -> pj,fg,bh,br
+  fp [color = red]
+  fp -> rd,zq
+  zq [color = green]
+  zq -> fs,gr,ff,hf,ln,zj,pj
+  ff [color = red]
+  ff -> cl
+  dr [color = red]
+  dr -> xd,nt
+  ln [color = red]
+  ln -> rm
+  dc [color = red]
+  dc -> mg,vn
+}
