@@ -13,6 +13,9 @@ Base.@kwdef struct Conjunction2
     next::Vector{String}
 end
 
+struct Broadcast
+    next::Vector{String}
+end
 
 # Register an input to a module
 register_input!(m::Conjunction2, mod) = (m.state[mod] = false)
@@ -24,10 +27,7 @@ get_state(m::Conjunction2) = collect(values(m.state))
 get_state(m::FlipFlop) = [m.state]
 get_state(ms::AbstractDict)::Vector{Bool} = reduce(vcat, get_state.(values(ms)))
 
-struct Broadcast
-    next::Vector{String}
-end
-
+# Send a pulse through the modules (gives the value of the output and updates module's state)
 propagate_pulse!(m::Broadcast, pulse::Bool, last::String) = pulse
 
 function propagate_pulse!(m::Conjunction2, pulse::Bool, last::String)
@@ -40,6 +40,27 @@ function propagate_pulse!(m::FlipFlop, pulse::Bool, last::String)
     m.state = !m.state
 end
 
+# Send a pulse through the whole network of modules (outputs a pulse count per module; vector of low and high pulses)
+function propagate_pulse!(modules::AbstractDict)
+    q = Vector{Tuple{String, Bool, String}}()
+    push!(q, ("broadcaster", false, "button"))
+    pulses = Dict{String, Vector{Int64}}()
+
+    while length(q) > 0
+        this_node, pulse_val, last_node = popfirst!(q)
+        this_node ∉ keys(pulses) && (pulses[this_node] = [0, 0])
+        pulses[this_node][Int(pulse_val) + 1] += 1
+        this_node ∉ keys(modules) && continue
+        p = propagate_pulse!(modules[this_node], pulse_val, last_node)
+        isnothing(p) && continue
+        for n in modules[this_node].next
+            push!(q, (n, p, this_node))
+        end
+    end
+    pulses
+end
+
+# Load the modules from the input
 function module_from_line(l)
     m = match(r"([%&]?)(\w+) -> ([\w\s,]+)", l)
     if m.captures[1] == "" && m.captures[2] == "broadcaster"
@@ -60,25 +81,7 @@ function parse_lines(ls)
     d
 end
 
-function propagate_pulse!(modules::AbstractDict)
-    q = Vector{Tuple{String, Bool, String}}()
-    push!(q, ("broadcaster", false, "button"))
-    pulses = Dict{String, Vector{Int64}}()
-
-    while length(q) > 0
-        this_node, pulse_val, last_node = popfirst!(q)
-        this_node ∉ keys(pulses) && (pulses[this_node] = [0, 0])
-        pulses[this_node][Int(pulse_val) + 1] += 1
-        this_node ∉ keys(modules) && continue
-        p = propagate_pulse!(modules[this_node], pulse_val, last_node)
-        isnothing(p) && continue
-        for n in modules[this_node].next
-            push!(q, (n, p, this_node))
-        end
-    end
-    pulses
-end
-
+# Count the number of pulses in n_presses by finding a cycle and skipping
 function count_pulses(modules, n_presses)
     modules = deepcopy(modules)
     seen = Dict{Vector{Bool}, Tuple{Int64, Vector{Int64}}}()
@@ -101,20 +104,7 @@ function count_pulses(modules, n_presses)
     pulses
 end
 
-function count_cycle_time(modules)
-    modules = deepcopy(modules)
-    seen = Set{Vector{Bool}}()
-    push!(seen, get_state(modules))
-    presses = 0
-    while true
-        propagate_pulse!(modules)
-        state = get_state(modules)
-        presses += 1
-        state ∈ seen && return presses
-        push!(seen, state)
-    end
-end
-
+# Find how many presses for an output to return low by brute force
 function presses_until_low(modules, node="rx")
     modules = deepcopy(modules)
     acc = 0
@@ -124,6 +114,7 @@ function presses_until_low(modules, node="rx")
     end
 end
 
+# Turn the dict of modules into a vizgraph input
 function to_vizgraph(modules)
     ret = "strict digraph{\n"
     for (k, m) in pairs(modules)
@@ -137,6 +128,19 @@ function to_vizgraph(modules)
     ret = ret * "}\n"
 end
 
+# How many presses before the modules return to the start position
+function count_cycle_time(modules)
+    modules = deepcopy(modules)
+    start_state = get_state(modules)
+    presses = 0
+    while true
+        propagate_pulse!(modules)
+        presses += 1
+        get_state(modules) == start_state && return presses
+    end
+end
+
+# Starting from the module with name in "end_node" find all modules that feed into it going back to the beginning module
 function get_modules_to_beginning(modules, end_node)
     ret = OrderedDict{String, Union{FlipFlop, Conjunction2, Broadcast}}()
     q = Vector{String}()
@@ -151,6 +155,7 @@ function get_modules_to_beginning(modules, end_node)
     ret
 end
 
+# Get the subgraphs two back from the end node (these are the groups of disconnected flip-flops for this puzzle)
 get_prev(m::Conjunction2) = collect(keys(m.state))
 function get_submodules(modules, end_node="rx")
     # Go a few steps up the chain (this is specific to this graph structure)
@@ -162,7 +167,9 @@ function get_submodules(modules, end_node="rx")
     [get_modules_to_beginning(modules, f) for f in feeders]
 end
 
+# Helper to not run part 2 code on the unit tests
 is_real_data(ms, end_node="rx") = any(end_node ∈ m.next for m in values(ms))
+
 function day20(input::String = readInput(joinpath(@__DIR__, "data", "day20.txt")))
     modules = parse_lines(input)
     # print(to_vizgraph(modules))
@@ -170,6 +177,3 @@ function day20(input::String = readInput(joinpath(@__DIR__, "data", "day20.txt")
 end
 
 end
-
-
-# 8978220530622 too low
