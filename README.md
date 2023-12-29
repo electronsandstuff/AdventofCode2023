@@ -1,4 +1,7 @@
 # AdventOfCode2023.jl
+
+![advent of code ascii art of floating islands](assets/aoc.png)
+
 My solutions for [Advent of Code 2023](https://adventofcode.com/2023/) using the [julia programming language](https://julialang.org/).
 Project structure was taken from [goggle/AdventOfCode2021.jl](https://github.com/goggle/AdventOfCode2021.jl) with some modifications.
 
