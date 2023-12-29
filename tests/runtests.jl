@@ -423,7 +423,7 @@ hdj{m>838:A,pv}
 12, 31, 28 @ -1, -2, -1
 20, 19, 15 @  1, -5, -3", 7, 27) == [2, 47]
 
-day25("
+@test day25("
 jqt: rhn xhk nvd
 rsh: frs pzl lsr
 xhk: hfx
@@ -436,4 +436,4 @@ ntq: jqt hfx bvb xhk
 nvd: lhk
 lsr: lhk
 rzs: qnr cmg lsr rsh
-frs: qnr lhk lsr")
+frs: qnr lhk lsr") == [54]
