@@ -42,7 +42,7 @@ parts_sum(p::PartRange) = (p.xb-p.xa+1)*(p.mb-p.ma+1)*(p.ab-p.aa+1)*(p.sb-p.sa+1
 
 # Splits a range into two pieces on the condition that the property is greater than a threshold
 # Returns lower and upper piece as tuple and pieces may be nothing
-function split(p::PartRange, prop, thresh)
+function split_range(p::PartRange, prop, thresh)
     if prop == 'x'
         p.xb <= thresh && return PartRange(p.xa, p.xb, p.ma, p.mb, p.aa, p.ab, p.sa, p.sb), nothing
         p.xa > thresh && return nothing, PartRange(p.xa, p.xb, p.ma, p.mb, p.aa, p.ab, p.sa, p.sb)
@@ -84,8 +84,8 @@ end
 
 # Pass a range through the rule: returns a tuple of the piece captured by the workflow and what is left over
 function get_comparison(f::Filter, p::PartRange)
-    f.gt && return split(p, f.property, f.thresh)
-    lo, hi = split(p, f.property, f.thresh-1)
+    f.gt && return split_range(p, f.property, f.thresh)
+    lo, hi = split_range(p, f.property, f.thresh-1)
     return hi, lo
 end
 

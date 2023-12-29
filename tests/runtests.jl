@@ -3,6 +3,8 @@ using AdventofCode2023
 using Test
 
 
+@testset begin
+
 @test day01("1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
@@ -310,7 +312,7 @@ hdj{m>838:A,pv}
 .......##..
 .##.#.####.
 .##..##.##.
-...........", 6)[1] == 16
+...........", 6, 6)[1] == 16
 
 @test AdventofCode2023.Day21.day21("...........
 .....###.#.
@@ -437,3 +439,5 @@ nvd: lhk
 lsr: lhk
 rzs: qnr cmg lsr rsh
 frs: qnr lhk lsr") == [54]
+
+end
