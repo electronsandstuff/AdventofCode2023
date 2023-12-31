@@ -25,6 +25,7 @@ get_min_bag(g) = reduce(bag_max_reduce, [subgame_to_dict(sg) for sg in split(g, 
 # Calculate the "power"
 bag_power(b) = prod(values(b))
 
+# Get the number to sum for this line using part 2 rules
 function line_to_count2(l)
     m = match(r".*Game (\d*): (.*)", l)
     m === nothing && return 0

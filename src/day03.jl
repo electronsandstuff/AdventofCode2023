@@ -1,5 +1,6 @@
 module Day03
 
+# Parses the input into a char matrix
 load_input(s) = permutedims(hcat((collect(strip(l)) for l in split(s, '\n') if length(l) > 1)...))
 
 # Check if a symbol neighbors this position
@@ -8,6 +9,7 @@ inbound(img, i, j) = (1 <= i <= size(img)[1]) && (1 <= j <= size(img)[2])
 neighbors(img, i, j) = ((i+x, j+y) for x in [-1 0 1] for y in [-1 0 1] if inbound(img, i+x, j+y) && (x != 0 || y != 0))
 is_symbol_adjacent(img, i, j) = any(issymbol(img[n...]) for n in neighbors(img, i, j))
 
+# Sums up any numbers in the char matrix that are adjacent to a symbol
 function sum_symbol_adjecent_nums(img)
     total = 0
     for i in 1:size(img)[1]
@@ -28,8 +30,11 @@ function sum_symbol_adjecent_nums(img)
     total
 end
 
-# Looking for numbers near gears
+# Sums the "gear ratios" in the char array. These are gears adjacent to exactly two "part numbers"
 get_gear_ratio_sum(img) = sum(prod(v) for v in values(get_gear_nums(img)) if length(v) ==2)
+
+# Find all the gears in the image and their adjacent part numbers. Returns a dict mapping gear location in the matrix to
+# a vector of part numbers
 function get_gear_nums(img)
     all_gears = Dict{Tuple{Int64, Int64}, Vector{Int64}}()
     for i in 1:size(img)[1]
@@ -54,8 +59,6 @@ function get_gear_nums(img)
     all_gears
 end
 
-
-# Final solution
 function day03(input::String = readInput(joinpath(@__DIR__, "data", "day03.txt")))
     img = load_input(input)
     [sum_symbol_adjecent_nums(img), get_gear_ratio_sum(img)]

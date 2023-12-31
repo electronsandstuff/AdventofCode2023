@@ -1,8 +1,9 @@
 module Day10
 
+# Loads a character matrix from input
 parse_input(s) = permutedims(hcat([collect(strip(x)) for x in split(s, '\n') if length(x) > 1]...))
 
-# Define pipe connectivity
+# Define pipe connectivity. Gives a Dict from the pipe characters to the relative indices they connect to
 north_idx = [-1, 0]
 south_idx = [1, 0]
 east_idx = [0, 1]
@@ -17,10 +18,18 @@ connectivity_dict = Dict{Char, Set{Vector{Int64}}}(
     '.' => Set(),
     'S' => Set((north_idx, south_idx, east_idx, west_idx)),
 )
+
+# Query the pipe character's connectivity from the dict
 connectivity(tile::Char) = connectivity_dict[tile]
+
+# Given the matrix of characters "tiles" is the location a connected to location b?
 connected(tiles, a, b) = ((a - b) ∈ connectivity(tiles[b...])) && ((b - a) ∈ connectivity(tiles[a...]))
 
+# Check if the index is inbounds for the matrix of tiles
 inbounds(tiles, idx) = (1 <= idx[1] <= size(tiles)[1]) && (1 <= idx[2] <= size(tiles)[2])
+
+# Finds the loop of pipes by repeatedly looking around for "unseen" pipes near the current head. Starts at the given character.
+# Returns the set of seen pipe locations
 function get_loop(tiles, start_char='S')
     current_idx = collect(Tuple(findfirst(==(start_char), tiles)))
     seen = Set{Vector{Int64}}((current_idx,))
@@ -40,6 +49,8 @@ function get_loop(tiles, start_char='S')
     seen
 end
 
+# Given the tile matrix and the loop of pipes, fill in all of the "pixels" inside the loop by scanning every pixel and keeping
+# track of when we cross into and out of the loop
 function fill_loop(tiles, loop, start_char='S')
     # Calculate if S serves the purpose of a horizontal element
     s_idx = collect(Tuple(findfirst(==(start_char), tiles)))

@@ -1,11 +1,19 @@
 module Day12
 
+# Represents one of the lines in the input with spring conditions and the list of group sizes
 struct ConditionRecord
     springs::String
     groups::Vector{Int64}
 end
+
+# Creates the expanded record for part 2 from an original record
 expand_record(cr::ConditionRecord) = ConditionRecord(join(repeat([cr.springs], 5), '?'), repeat(cr.groups, 5))
 
+# Recursively calculate the number of ways we can fill in the unknown conditions that still satisfies the groups. Use
+# memoization (in the form of the memo argument passed to subsequent recursions) to make things fast enough. r_idx is the index
+# of the spring currently being considered, grp_idx is which group of springs we are checking out, cur_grp keep track of how many
+# springs are in the current group. Goes down every possible branch for the unknown springs until that branch is found to be
+# incompatible with the group counts or we reach the end of the string.
 function count_valid_records(cr::ConditionRecord, r_idx=1, grp_idx=1, cur_grp=0, memo=Dict{Tuple{Int64, Int64, Int64}, Int64}())
     # Check the memo for this solution
     k = (r_idx, grp_idx, cur_grp)
@@ -37,6 +45,8 @@ end
 
 # For reading in records
 parse_input(s) = [parse_line(l) for l in split(s, '\n') if length(l) > 1]
+
+# Loads one of the condition records from a line in the input file
 function parse_line(l)
     m = match(r"([\?\.\#]*) ([\d\,]*)", l)
     if !isnothing(m)

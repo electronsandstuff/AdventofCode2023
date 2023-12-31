@@ -1,36 +1,47 @@
 module Day05
 
-# Rule helper object
+# Represents a rule that maps one chunk of inputs to a set of outputs (ie a single line in the groups of the input)
 struct Rule
     source_range::UnitRange{Int64}
     offset::Int64
 end
+
+# Generate a rule from the format in the input file
 Rule(dest_start::Int64, src_start::Int64, range::Int64) = Rule(src_start:(src_start+range-1), dest_start-src_start)
 
-# My linked-list object for rules
+# My linked-list object representing one of the "banks" of multiple rules in the input file that maps one entity to another
 struct LinkedList
     to::Union{LinkedList, Nothing}
     rules::Vector{Rule}
 end
+
+# Add to the head of the linked list
 push(list::LinkedList, data::Vector{Rule}) = LinkedList(list, data)
 
 # Some helper functions for working with ranges
 Base.minimum(a::Vector{UnitRange{Int64}}) = minimum([first(x) for x in a])
 rangediff(a, b) =  [first(a):(first(b)-1), (last(b)+1):last(a)]
 
-# Rules to transform numbers through the rules and linked lists of rules
-transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
+# Transforms the value through every node in the linked list by recursively transforming the value according to this
+# node's rules and then passing the result to the next node in the linked list until there is no next node. The actual
+# low level transformation rules are implemented as transform(...) called on the vector of rules
+function transform(ll::LinkedList, val)
+    n = transform(ll.rules, val)  # Apply our rules to the value
+    isnothing(ll.to) ? n : transform(ll.to, n)  # Check for next node and pass value to it (or return if there is none)
+end
 
+# Pass a single number through a list of rules (also returns a number). Check every rule for if it applies and returns
+# the original input as default
 function transform(rs::Vector{Rule}, val::Int64)
     for r in rs; val in r.source_range && return val + r.offset; end
     val
 end
 
-function transform(ll::LinkedList, val)
-    n = transform(ll.rules, val)
-    isnothing(ll.to) ? n : transform(ll.to, n)
-end
+# Applies the list of rules to a vector of ranges (just passes things to the rule for a single range and combines results into a vector of ranges)
+transform(rs::Vector{Rule}, vals::Vector{UnitRange{Int64}}) = vcat((transform(rs, v) for v in vals)...)
 
+# Apply a list of rules to a single range (results in a vector of ranges) by successively applying intersection and differences with the regions 
+# the rules apply to
 function transform(rs::Vector{Rule}, vals::UnitRange{Int64})
     vals_a::Vector{UnitRange{Int64}} = [vals]
     vals_b::Vector{UnitRange{Int64}} = []
@@ -51,7 +62,7 @@ function transform(rs::Vector{Rule}, vals::UnitRange{Int64})
     [out; vals_a]
 end
 
-# Read the input file and get seeds and the maps of rules
+# Read the input file into the list of seeds (for pt 1) the list of ranges of seeds (for pt 2) and the linked list of rules
 function parse_maps(s, ll_from, ll_to)
     seeds::Vector{Int64} = []
     maps = Dict{String, NamedTuple{(:from, :rules), Tuple{String, Vector{Rule}}}}()
@@ -88,10 +99,8 @@ function parse_maps(s, ll_from, ll_to)
     seeds, seeds_pt2, linked_list
 end
 
-# Find minimum transformed values
-function min_dest_val(ll::LinkedList, vals::Vector{Int64}) 
-    min((transform(ll, v) for v in vals)...)
-end
+# Find the minimum transformed values after going through the linked list (for both numbers and ranges)
+min_dest_val(ll::LinkedList, vals::Vector{Int64}) = min((transform(ll, v) for v in vals)...)
 min_dest_val(ll::LinkedList, vals::Vector{UnitRange{Int64}}) = minimum(transform(ll, vals))
 
 function day05(input::String = readInput(joinpath(@__DIR__, "data", "day05.txt")))
